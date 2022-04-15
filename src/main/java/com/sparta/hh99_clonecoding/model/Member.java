@@ -24,6 +24,12 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    public Member(String email, String username, String password) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
+
     public Member(MemberRequestDto memberRequestDto) {
         this.email = memberRequestDto.getEmail();
         this.username = memberRequestDto.getUsername();
