@@ -21,5 +21,4 @@ public class TestController {
     public ResponseEntity<ExceptionResponseDto> getPosts_ok(){
         return new ResponseEntity<>(new ExceptionResponseDto(Code.OK), HttpStatus.OK);
     }
-
 }
