@@ -24,6 +24,9 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
     public Member(String email, String username, String password) {
         this.email = email;
         this.username = username;
