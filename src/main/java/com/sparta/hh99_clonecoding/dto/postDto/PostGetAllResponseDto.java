@@ -23,7 +23,7 @@ public class PostGetAllResponseDto {
         this.postId = post.getId();
 //        this.writer = post.getUser().getUsername();
         this.desc = post.getDesc();
-//        this.imageUrl = post.getImageUrl();
+        this.imageUrl = post.getImageUrl();
         this.createdAt = formatter(post.getCreatedAt());
         this.modifiedAt = formatter(post.getModifiedAt());
 //        this.totalLike = totalLike;

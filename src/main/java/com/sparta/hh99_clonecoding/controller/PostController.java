@@ -6,11 +6,17 @@ import com.sparta.hh99_clonecoding.dto.postDto.PostResponseDto;
 import com.sparta.hh99_clonecoding.dto.postDto.PostUpdateResponseDto;
 import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.ExceptionResponseDto;
+import com.sparta.hh99_clonecoding.exception.PrivateException;
 import com.sparta.hh99_clonecoding.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.PrimitiveIterator;
 
 @RestController
 @RequestMapping("/api")
@@ -32,12 +38,25 @@ public class PostController {
     // 게시글 작성
     // @AuthenticationPrincipal UserDetails userDetails 넣기
     // 이미지 추가 필요
-    @PostMapping("/post")
-    public ExceptionResponseDto upload(@RequestBody PostResponseDto responseDto) {
-        postService.uploadPost(responseDto);
+//    @PostMapping("/post")
+//    public ExceptionResponseDto upload(@RequestBody PostResponseDto responseDto) throws IOException {
+//        String imageUrl = postService.uploadPost(responseDto);
+//        if (imageUrl == null){
+//            return new ExceptionResponseDto(Code.POST_IMAGE_ERROR);
+//        }
+//        return new ExceptionResponseDto(Code.OK);
+//    }
 
+
+    // 이미지 시도 중
+    @PostMapping("/post")
+    public ExceptionResponseDto upload(PostResponseDto postResponseDto) throws IOException {
+        String imageUrl = postService.uploadPost(postResponseDto);
+        if(imageUrl == null) return new ExceptionResponseDto(Code.POST_IMAGE_ERROR);
         return new ExceptionResponseDto(Code.OK);
     }
+
+
 
     // 게시글 작성 2
     // @AuthenticationPrincipal UserDetails userDetails 넣기
@@ -68,5 +87,4 @@ public class PostController {
         postService.deletePost(id);
         return new ExceptionResponseDto(Code.OK);
     }
-
 }

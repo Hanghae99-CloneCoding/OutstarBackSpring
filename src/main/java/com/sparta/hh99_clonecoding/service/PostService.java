@@ -8,10 +8,12 @@ import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
 import com.sparta.hh99_clonecoding.model.Post;
 import com.sparta.hh99_clonecoding.repository.PostRepository;
+import com.sparta.hh99_clonecoding.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,9 +24,11 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final S3Uploader s3Uploader;
 
 //    // 게시글 전체 조회
 //    // 유저 정보 넣기, 좋아요, 댓글 개수 카운트
+    @Transactional
     public List<PostGetAllResponseDto> getAllPost() {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         List<PostGetAllResponseDto> responseDtos = new ArrayList<>();
@@ -35,18 +39,34 @@ public class PostService {
     }
 
     // 게시글 작성
-    // 유저 정보, 이미지 추가
-    public String uploadPost(PostResponseDto responseDto) {
-        String desc = responseDto.getDesc();
-//        if (desc == null) {
-//            throw new PrivateException(Code.WRONG_INPUT);
-//        }
-        Post post = new Post(desc);
+    // 유저 정보 추가 해야함
+    @Transactional
+    public String uploadPost(PostResponseDto postResponseDto) throws IOException {
+        // 유저 조회
+////        User user = userRepository.findByUserName(username).orElseThow(
+////                () -> new PrivateException(Code.NOT_FOUND_USER_NAME)
+////        );
+
+        String desc = postResponseDto.getDesc();
+
+        // 이미지 업로드
+        String imageUrl = s3Uploader.upload(postResponseDto.getImageUrl());
+
+        // post 저장
+        Post post = new Post(desc, imageUrl);
         postRepository.save(post);
-        return desc;
+        return imageUrl;
     }
 
+    // 게시글 작성 2차 방법
+//    @Transactional
+//    public PostResponseDto uploadPost(String desc) {
+//        Post post = new Post(desc);
+//        return new PostResponseDto(postRepository.save(post));
+//    }
+
     // 게시글 수정
+    // 유저 정보 추가 필요
     @Transactional
     public PostUpdateResponseDto updatePost(Long id, PostRequestDto requestDto) {
         // 해당 게시글 존재 여부 확인
@@ -77,21 +97,7 @@ public class PostService {
         );
     }
 
-    public void deletePost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new PrivateException(Code.NOT_FOUND_POST)
-        );
-        postRepository.delete(post);
-    }
-
-    // 게시글 작성 2차 방법
-//    @Transactional
-//    public PostResponseDto uploadPost(String desc) {
-//        Post post = new Post(desc);
-//        return new PostResponseDto(postRepository.save(post));
-//    }
-
-    // 게시글 수정
+    // 게시글 수정 2차 방법
 //    @Transactional
 //    public PostResponseDto uploadPost(Long id, PostRequestDto requestDto) {
 //        Post post = postRepository.findById(id).orElseThrow(
@@ -110,6 +116,31 @@ public class PostService {
 //        return new PostResponseDto(post);
 //
 //    }
+
+    // 게시글 삭제
+    // 유저 정보 추가 필요
+    @Transactional
+    public void deletePost(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new PrivateException(Code.NOT_FOUND_POST)
+        );
+
+        // 유저 조회
+////        User user = userRepository.findByUserName(username).orElseThow(
+////                () -> new PrivateException(Code.NOT_FOUND_USER_NAME)
+////        );
+//
+//        // 본인의 게시글만 삭제 가능
+////        if (!post.getUser().equals(user)) {
+////            throw new PrivateException(Code.WRONG_USER_NAME_DELETE);
+////        }
+
+        // 해당 게시글 삭제
+        postRepository.delete(post);
+
+        // 게시글의 이미지 삭제
+        s3Uploader.delete(post.getImageUrl());
+    }
 
     public String formatter(LocalDateTime localDateTime) {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(localDateTime);
