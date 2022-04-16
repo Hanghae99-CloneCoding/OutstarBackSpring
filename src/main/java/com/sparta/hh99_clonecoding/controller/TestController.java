@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class TestController {
 
-    @GetMapping("/api/test_getERR")
+    @GetMapping("/api/test/getERR")
     public void getPosts(){
         throw new PrivateException(Code.POST_GET_ERROR);
     }
 
-    @GetMapping("/api/test_ok")
+    @GetMapping("/api/test/ok")
     public ResponseEntity<ExceptionResponseDto> getPosts_ok(){
         return new ResponseEntity<>(new ExceptionResponseDto(Code.OK), HttpStatus.OK);
     }
