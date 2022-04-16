@@ -28,8 +28,11 @@ public enum Code {
     COMMENT_PUT_ERROR(HttpStatus.BAD_REQUEST, "31", "댓글 수정 실패"),
     COMMENT_DELETE_ERROR(HttpStatus.BAD_REQUEST, "32", "댓글 삭제 실패"),
 
+    NOT_FOUND_USER_NAME(HttpStatus.NOT_FOUND, "400", "해당 유저 정보를 찾을 수 없습니다"),
+    NOT_FOUND_JWT_TOKEN(HttpStatus.NOT_FOUND, "500", "JWT 이 존재하지 않습니다. 다시 확인해주세요."),
 
-    INTERNAL_SERVER_ERROR_PLZ_CHECK(HttpStatus.INTERNAL_SERVER_ERROR, "999", "알수없는 서버 내부 에러 발생. 서버 담당자에게 알려주세요."),;
+
+    INTERNAL_SERVER_ERROR_PLZ_CHECK(HttpStatus.INTERNAL_SERVER_ERROR, "999", "알수없는 서버 내부 에러 발생. 서버 담당자에게 알려주세요.");
 
     // NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "12", "해당 USER ID는 존재하지 않습니다."),
     // NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "13", "PASSWORD 가 틀렸습니다."),

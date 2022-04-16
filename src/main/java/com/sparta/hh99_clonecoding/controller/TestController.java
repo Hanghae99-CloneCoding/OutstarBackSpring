@@ -22,4 +22,9 @@ public class TestController {
         return new ResponseEntity<>(new ExceptionResponseDto(Code.OK), HttpStatus.OK);
     }
 
+    @GetMapping("/api/logintest")
+    public ResponseEntity<ExceptionResponseDto> getLoginTest(){
+        return new ResponseEntity<>(new ExceptionResponseDto(Code.OK,"로그인 테스트 성공"), HttpStatus.OK);
+    }
+
 }

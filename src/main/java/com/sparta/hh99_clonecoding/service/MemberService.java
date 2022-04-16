@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class MemberService {
     private MemberRepository memberRepository;
     private Validator validator;
-
     private PasswordEncoder passwordEncoder;
 
     public boolean signup(MemberRequestDto memberRequestDto) {
