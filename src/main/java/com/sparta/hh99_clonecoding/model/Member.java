@@ -29,10 +29,4 @@ public class Member {
         this.username = username;
         this.password = password;
     }
-
-    public Member(MemberRequestDto memberRequestDto) {
-        this.email = memberRequestDto.getEmail();
-        this.username = memberRequestDto.getUsername();
-        this.password = memberRequestDto.getPassword();
-    }
 }
