@@ -49,7 +49,7 @@ public class Post extends Timestamped {
 
     // 게시글 수정
     public void updatePost(PostRequestDto res) {
-        if (!StringUtils.hasText(desc)) {
+        if (!StringUtils.hasText(res.getDesc())) {
             throw new PrivateException(Code.WRONG_INPUT_DESC);
         }
         this.desc = res.getDesc();

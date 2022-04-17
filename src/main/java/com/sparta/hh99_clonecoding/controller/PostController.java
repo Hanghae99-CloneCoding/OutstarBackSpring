@@ -1,9 +1,6 @@
 package com.sparta.hh99_clonecoding.controller;
 
-import com.sparta.hh99_clonecoding.dto.postDto.PostGetAllResponseDto;
-import com.sparta.hh99_clonecoding.dto.postDto.PostRequestDto;
-import com.sparta.hh99_clonecoding.dto.postDto.PostResponseDto;
-import com.sparta.hh99_clonecoding.dto.postDto.PostUpdateResponseDto;
+import com.sparta.hh99_clonecoding.dto.postDto.*;
 import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.ExceptionResponseDto;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
@@ -30,9 +27,23 @@ public class PostController {
     // 게시글 전체 조회 이미지 다중 버전
     // @AuthenticationPrincipal UserDetails userDetails 넣기
     @GetMapping("/posts")
-    public Map<String, List<PostGetAllResponseDto>> getMain(){ return postService.getAllPost();}
+    public Map<String, List<PostGetAllResponseDto>> getAllPost(){ return postService.getAllPost();}
 
     // 무한 스크롤 api 따로 추가해야하나..?
+
+    // 게시글 상세 조회
+    // 유저 정보 추가
+//    @GetMapping("/post/{postId}")
+//    public ExceptionResponseDto getPost(@PathVariable Long postId) {
+//        postService.getDetailPost(postId);
+//        return new ExceptionResponseDto(Code.OK);
+//    }
+
+    @GetMapping("/post/{postId}")
+    public ExceptionResponseDto getPost(@PathVariable Long postId) {
+        PostDetailDto postDetailDto = postService.getDetailPost(postId);
+        return new ExceptionResponseDto(Code.OK, postDetailDto);
+    }
 
     @PostMapping("/post")
     public ExceptionResponseDto uploadPost(@RequestPart("desc") PostRequestDto postRequestDto,
@@ -52,7 +63,7 @@ public class PostController {
     @PutMapping("/post/{postId}")
     public ExceptionResponseDto updatePost(@PathVariable Long postId,@RequestPart("desc") PostRequestDto postRequestDto) {
         PostUpdateResponseDto postUpdateResponseDto = postService.updatePost(postId, postRequestDto);
-        return new ExceptionResponseDto(Code.OK,postUpdateResponseDto);
+        return new ExceptionResponseDto(Code.OK, postUpdateResponseDto);
     }
 
     // 게시글 삭제

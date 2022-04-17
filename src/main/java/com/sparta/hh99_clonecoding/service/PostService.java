@@ -1,16 +1,12 @@
 package com.sparta.hh99_clonecoding.service;
 
-import com.sparta.hh99_clonecoding.dto.postDto.PostGetAllResponseDto;
-import com.sparta.hh99_clonecoding.dto.postDto.PostRequestDto;
-import com.sparta.hh99_clonecoding.dto.postDto.PostResponseDto;
-import com.sparta.hh99_clonecoding.dto.postDto.PostUpdateResponseDto;
+import com.sparta.hh99_clonecoding.dto.postDto.*;
 import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
 import com.sparta.hh99_clonecoding.model.Img;
 import com.sparta.hh99_clonecoding.model.Post;
 import com.sparta.hh99_clonecoding.repository.ImgRepository;
 import com.sparta.hh99_clonecoding.repository.PostRepository;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -57,6 +53,22 @@ public class PostService {
         return new PostGetAllResponseDto(id, post, imgUrl);
     }
 
+    // 게시글 상세 조회
+    public PostDetailDto getDetailPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new PrivateException(Code.NOT_FOUND_POST));
+
+        imgRepository.findAllByPost(post).forEach(post::addImgList);
+        List<String> imgUrl = imgRepository.findAllByPost(post)
+                .stream()
+                .map(Img::getImgUrl)
+                .collect(Collectors.toList());
+
+        return new PostDetailDto(postId, post, imgUrl);
+    }
+
+
+
     // 게시글 작성
     // 유저 정보 넣기
     @Transactional
@@ -95,7 +107,6 @@ public class PostService {
     // 유저 정보 추가
     @Transactional
     public PostUpdateResponseDto updatePost(Long postId, PostRequestDto postRequestDto) {
-        // 해당 게시글 존재 여부 확인
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PrivateException(Code.NOT_FOUND_POST));
 
@@ -107,6 +118,10 @@ public class PostService {
         // 본인의 게시글만 수정 가능
 //        if (!post.getMember().equals(member)) {
 //           throw new PrivateException(Code.WRONG_USER_NAME);
+
+//        if(!StringUtils.hasText(postRequestDto.getDesc())){
+//            throw new ApiRequestException("내용은 반드시 있어야합니다.");
+//        }
 
         post.updatePost(postRequestDto);
         return new PostUpdateResponseDto(postId, post);
