@@ -8,14 +8,14 @@ import com.sparta.hh99_clonecoding.model.Post;
 import com.sparta.hh99_clonecoding.repository.ImgRepository;
 import com.sparta.hh99_clonecoding.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +38,25 @@ public class PostService {
             list.add(main);
         }
         listMap.put("mainData", list);
+        return listMap;
+    }
+
+    // 무한 스크롤
+    public Map<String, List<PostGetAllResponseDto>> getAllPostSlice(int page, int size, String sortBy, Boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Slice<Post> slicePostList = postRepository.findAllBy(pageable);
+
+        Map<String, List<PostGetAllResponseDto>> listMap = new HashMap<>();
+        List<PostGetAllResponseDto> list = new ArrayList<>();
+        for (Post post : slicePostList) {
+            PostGetAllResponseDto main = createMain(post.getId());
+            list.add(main);
+        }
+        listMap.put("mainData", list);
+
         return listMap;
     }
 
@@ -66,8 +85,6 @@ public class PostService {
 
         return new PostDetailDto(postId, post, imgUrl);
     }
-
-
 
     // 게시글 작성
     // 유저 정보 넣기
@@ -101,7 +118,6 @@ public class PostService {
             throw new PrivateException(Code.WRONG_INPUT_IMAGE);
         }
     }
-
 
     // 게시글 수정 - 글만
     // 유저 정보 추가

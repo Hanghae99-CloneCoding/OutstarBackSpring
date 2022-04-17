@@ -8,6 +8,7 @@ import com.sparta.hh99_clonecoding.model.Img;
 import com.sparta.hh99_clonecoding.service.PostService;
 import com.sparta.hh99_clonecoding.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,16 +30,28 @@ public class PostController {
     @GetMapping("/posts")
     public Map<String, List<PostGetAllResponseDto>> getAllPost(){ return postService.getAllPost();}
 
-    // 무한 스크롤 api 따로 추가해야하나..?
+    // 메인 페이지 무한 스크롤
+    @GetMapping("/postsScroll")
+    public Map<String, List<PostGetAllResponseDto>> getPostSlice(
+            @RequestParam(required=false) Integer page,
+            @RequestParam(required=false) Integer size,
+            @RequestParam(required=false) String sortBy ,
+            @RequestParam(required=false) Boolean isAsc
+    ) {
+        if (isNotNullParam(page, size, sortBy, isAsc)) {
+            page -= 1;
+            return postService.getAllPostSlice(page, size, sortBy, isAsc);
+        } else {
+            throw new PrivateException(Code.PAGING_ERROR);
+        }
+    }
+
+    private boolean isNotNullParam(Integer page, Integer size, String sortBy, Boolean isAsc) {
+        return (page != null) && (size != null) && (sortBy != null) && (isAsc != null);
+    }
 
     // 게시글 상세 조회
     // 유저 정보 추가
-//    @GetMapping("/post/{postId}")
-//    public ExceptionResponseDto getPost(@PathVariable Long postId) {
-//        postService.getDetailPost(postId);
-//        return new ExceptionResponseDto(Code.OK);
-//    }
-
     @GetMapping("/post/{postId}")
     public ExceptionResponseDto getPost(@PathVariable Long postId) {
         PostDetailDto postDetailDto = postService.getDetailPost(postId);
