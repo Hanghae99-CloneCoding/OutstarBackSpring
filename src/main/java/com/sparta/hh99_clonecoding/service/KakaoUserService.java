@@ -4,28 +4,35 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.hh99_clonecoding.dto.KakaoUserInfoDto;
+import com.sparta.hh99_clonecoding.dto.MemberRequestDto;
+import com.sparta.hh99_clonecoding.jwt.JwtFilter;
+import com.sparta.hh99_clonecoding.jwt.TokenProvider;
+import com.sparta.hh99_clonecoding.model.Member;
 import com.sparta.hh99_clonecoding.repository.MemberRepository;
-import lombok.AllArgsConstructor;
+import com.sparta.hh99_clonecoding.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
+import java.util.UUID;
 
 @Service
 public class KakaoUserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private MemberRepository userRepository;
+    private MemberRepository memberRepository;
+    @Autowired
+    private TokenProvider tokenProvider;
 
     @Value("${kakao.access-token.client-id}") private String CLIENT_ID;
 
@@ -41,12 +48,10 @@ public class KakaoUserService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         // 3. 필요시에 회원가입
-//        Member kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
+        Member kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
-        // 4. 강제 로그인 처리
-//        forceLogin(kakaoUser);
-
-        return null;
+        // 4. 강제 로그인 처리 후 JWT 토큰 return
+        return forceLogin(kakaoUser);
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -109,34 +114,53 @@ public class KakaoUserService {
         return new KakaoUserInfoDto(id, nickname, email);
     }
 
-//    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
-//        // DB 에 중복된 Kakao Id 가 있는지 확인
-//        Long kakaoId = kakaoUserInfo.getId();
-//        User kakaoUser = userRepository.findByKakaoId(kakaoId)
-//                .orElse(null);
-//        if (kakaoUser == null) {
-//            // 회원가입
-//            // username: kakao nickname
-//            String nickname = kakaoUserInfo.getNickname();
-//
-//            // password: random UUID
-//            String password = UUID.randomUUID().toString();
-//            String encodedPassword = passwordEncoder.encode(password);
-//
-//            // email: kakao email
-//            String email = kakaoUserInfo.getEmail();
-//            // role: 일반 사용자
-//            UserRoleEnum role = UserRoleEnum.USER;
-//
-//            kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
-//            userRepository.save(kakaoUser);
-//        }
-//        return kakaoUser;
-//    }
-//
-//    private void forceLogin(User kakaoUser) {
-//        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//    }
+    private Member registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+        // DB 에 중복된 Kakao Id 가 있는지 확인
+        Long kakaoId = kakaoUserInfo.getId();
+        Member kakaoUser = memberRepository.findByKakaoId(kakaoId).orElse(null);
+
+        // 없으면 DB에 데이터 저장
+        if (kakaoUser == null) {
+            //DB 저장 전 email 검색
+            Member memberWithKakaoEmail = memberRepository.findByEmail(kakaoUserInfo.getEmail()).orElse(null);
+            if (memberWithKakaoEmail == null) {
+                //1.없으면 회원가입 진행
+                Member newMember = getNewMemberDataByConvertingKakaoUserToMember(kakaoUserInfo);
+                memberRepository.save(newMember);
+                return newMember;
+            }else {
+                //2.있으면 카카오 id 추가
+                memberWithKakaoEmail.setKakaoId(kakaoUserInfo.getId());
+                memberRepository.save(memberWithKakaoEmail);
+                return memberWithKakaoEmail;
+            }
+        }
+
+        return kakaoUser;
+    }
+
+    private Member getNewMemberDataByConvertingKakaoUserToMember(KakaoUserInfoDto kakaoUserInfo) {
+        Long kakaoId = kakaoUserInfo.getId();
+        String nickname = kakaoUserInfo.getNickname();
+        // password: random UUID
+        String password = UUID.randomUUID().toString();
+        String encodedPassword = passwordEncoder.encode(password);
+        // email: kakao email
+        String email = kakaoUserInfo.getEmail();
+
+        return new Member(email, nickname, encodedPassword, kakaoId);
+    }
+
+    private HttpHeaders forceLogin(Member kakaoUser) {
+        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = tokenProvider.createToken(authentication);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+
+        return httpHeaders;
+    }
 }

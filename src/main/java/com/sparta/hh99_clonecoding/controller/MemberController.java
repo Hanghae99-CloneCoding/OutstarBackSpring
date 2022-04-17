@@ -42,7 +42,8 @@ public class MemberController {
 
     @GetMapping("/user/kakao/callback")
     public ResponseEntity<ExceptionResponseDto> kakaoLogin(@RequestParam(value = "code") String authorityCode) throws JsonProcessingException {
-        HttpHeaders httpHeaderWithJWT = kakaoUserService.kakaoLogin(authorityCode);
+        HttpHeaders httpHeaderWithJWT =  kakaoUserService.kakaoLogin(authorityCode);
+
         return new ResponseEntity<>(new ExceptionResponseDto(Code.OK), httpHeaderWithJWT, HttpStatus.OK);
     }
 
