@@ -1,23 +1,20 @@
 package com.sparta.hh99_clonecoding.dto.postDto;
 
-import lombok.Data;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+import java.util.List;
+@Setter
 @Getter
+@NoArgsConstructor
 public class PostResponseDto {
 //    private String username;
     private String desc;
-    private MultipartFile imageUrl;
-//    private List<String> url = new ArrayList<>();
+    private List<String> imgUrl;
 
-//    private LocalDateTime createdAt;
-//    private LocalDateTime modifiedAt;
-
-//    public PostResponseDto(Post post) {
-//        this.desc = post.getDesc();
-////        this.createdAt = post.getCreatedAt();
-////        this.modifiedAt = post.getModifiedAt();
-//    }
+    public PostResponseDto(String desc, List<String> imgUrl) {
+        this.desc = desc;
+        this.imgUrl = imgUrl;
+    }
 }
