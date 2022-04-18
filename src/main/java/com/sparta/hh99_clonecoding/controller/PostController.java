@@ -23,8 +23,7 @@ public class PostController {
     private final PostService postService;
     private final S3Service s3Service;
 
-    // 게시글 전체 조회 이미지 다중 버전
-    // @AuthenticationPrincipal UserDetails userDetails 넣기
+    // 게시글 전체 조회
     @GetMapping("/posts")
     public Map<String, List<PostGetResponseDto>> getAllPost(){ return postService.getAllPost();}
 

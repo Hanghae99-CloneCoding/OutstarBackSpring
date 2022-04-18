@@ -25,13 +25,17 @@ public class Comment extends Timestamped{
     @Column(nullable = false)
     private String comment;
 
-    public Comment(Post post, CommentRequestDto commentRequestDto) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Member member;
+
+    public Comment(Post post, CommentRequestDto commentRequestDto, Member member) {
         if (!StringUtils.hasText(commentRequestDto.getComment())) {
             throw new PrivateException(Code.WRONG_INPUT_COMMENT);
         }
-
         this.post = post;
         this.comment = commentRequestDto.getComment();
+        this.member = member;
     }
 
     public void update(CommentRequestDto commentRequestDto) {

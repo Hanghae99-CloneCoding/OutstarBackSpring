@@ -16,7 +16,6 @@ public class CommentController {
     private final CommentService commentService;
 
     // Comment 작성
-    // 유저 정보 추가
     @PostMapping("/post/{postId}/comment")
     public ExceptionResponseDto postComment(@PathVariable(name="postId") Long postId, @RequestBody CommentRequestDto commentRequestDto) {
         CommentResponseDto commentResponseDto = commentService.postComment(postId, commentRequestDto);
