@@ -1,6 +1,5 @@
 package com.sparta.hh99_clonecoding.controller;
 
-import com.sparta.hh99_clonecoding.dto.postDto.PostDetailDto;
 import com.sparta.hh99_clonecoding.dto.postDto.PostGetResponseDto;
 import com.sparta.hh99_clonecoding.dto.postDto.PostRequestDto;
 import com.sparta.hh99_clonecoding.dto.postDto.PostUpdateResponseDto;
@@ -9,6 +8,7 @@ import com.sparta.hh99_clonecoding.exception.ExceptionResponseDto;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
 import com.sparta.hh99_clonecoding.service.PostService;
 import com.sparta.hh99_clonecoding.service.S3Service;
+import com.sparta.hh99_clonecoding.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,6 +82,12 @@ public class PostController {
     @DeleteMapping("/post/{postId}")
     public ExceptionResponseDto deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
+        return new ExceptionResponseDto(Code.OK);
+    }
+
+    @PostMapping("/post/test")
+    public ExceptionResponseDto testPost(){
+        System.out.println(SecurityUtil.getCurrentUsername());
         return new ExceptionResponseDto(Code.OK);
     }
 }

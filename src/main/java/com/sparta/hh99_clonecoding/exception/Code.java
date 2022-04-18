@@ -39,12 +39,9 @@ public enum Code {
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "400", "해당 회원을 찾을 수 없습니다"),
     NOT_FOUND_JWT_TOKEN(HttpStatus.NOT_FOUND, "500", "JWT 이 존재하지 않습니다. 다시 확인해주세요."),
 
+    NOT_FOUND_AUTHORIZATION_IN_SECURITY_CONTEXT(HttpStatus.INTERNAL_SERVER_ERROR, "998", "Security Context에 인증 정보가 없습니다."),
     INTERNAL_SERVER_ERROR_PLZ_CHECK(HttpStatus.INTERNAL_SERVER_ERROR, "999", "알수없는 서버 내부 에러 발생. 서버 담당자에게 알려주세요.");
 
-    // NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "12", "해당 USER ID는 존재하지 않습니다."),
-    // NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "13", "PASSWORD 가 틀렸습니다."),
-    // NOT_FOUND_POST_ID(HttpStatus.NOT_FOUND, "24", "해당 POST ID는 존재하지 않습니다."),
-    // NOT_FOUND_COMMENT_ID(HttpStatus.NOT_FOUND, "25", "해당 COMMENT ID는 존재하지 않습니다."),
 
     private final HttpStatus httpStatus;
     private final String code;
