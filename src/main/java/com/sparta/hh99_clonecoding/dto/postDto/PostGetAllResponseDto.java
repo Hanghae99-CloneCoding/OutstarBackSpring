@@ -5,31 +5,24 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 public class PostGetAllResponseDto {
+    // 유저 정보 추가
+    // 좋아요 수 추가
+    // 댓글 추가
     private Long postId;
-//    private String writer;
     private String desc;
-    private String imageUrl;
-    private String createdAt;
+    private List<String> imgUrl;
     private String modifiedAt;
-//    private Long likesNum;
-//    private Long commentsNum;
-//    private boolean like;
-//    private boolean checkUser;
 
-    public PostGetAllResponseDto(Post post) {
-        this.postId = post.getId();
-//        this.writer = post.getUser().getUsername();
+    public PostGetAllResponseDto(Long postId, Post post, List<String> imgUrl) {
+        this.postId = postId;
         this.desc = post.getDesc();
-//        this.imageUrl = post.getImageUrl();
-        this.createdAt = formatter(post.getCreatedAt());
+        this.imgUrl = imgUrl;
         this.modifiedAt = formatter(post.getModifiedAt());
-//        this.totalLike = totalLike;
-//        this.heartLike = heartLike;
-//        this.totalComment = totalComment;
-//        this.checkMember = checkMember;
+
     }
 
     public String formatter(LocalDateTime localDateTime) {

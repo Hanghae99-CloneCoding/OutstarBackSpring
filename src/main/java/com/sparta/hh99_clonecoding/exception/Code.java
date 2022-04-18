@@ -12,8 +12,15 @@ public enum Code {
 
     NOT_FOUND_POST(HttpStatus.BAD_REQUEST, "200", "해당 피드가 존재하지 않습니다"),
     WRONG_USER_NAME(HttpStatus.BAD_REQUEST, "201", "본인 피드만 수정할 수 있습니다"),
-    WRONG_INPUT(HttpStatus.BAD_REQUEST, "202", "내용을 입력해주세요"),
-    POST_GET_ERROR(HttpStatus.BAD_REQUEST, "23", "게시글 조회 실패"),
+    WRONG_USER_NAME_DELETE(HttpStatus.BAD_REQUEST, "202", "본인 피드만 삭제할 수 있습니다"),
+    WRONG_INPUT_DESC(HttpStatus.BAD_REQUEST, "203", "내용을 입력해주세요"),
+    WRONG_INPUT_IMAGE(HttpStatus.BAD_REQUEST, "204", "이미지는 반드시 있어야 합니다"),
+
+
+    IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "210", "이미지 업로드에 실패했습니다"),
+    WRONG_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "211", "지원하지 않는 파일 형식입니다"),
+
+    PAGING_ERROR(HttpStatus.BAD_REQUEST, "220", "모든 요소가 필요합니다"),
 
     COMMENT_POST_ERROR(HttpStatus.BAD_REQUEST, "30", "댓글 작성 실패"),
     COMMENT_PUT_ERROR(HttpStatus.BAD_REQUEST, "31", "댓글 수정 실패"),
