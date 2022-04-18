@@ -36,7 +36,6 @@ public class PostService {
 
 
     // 게시글 전체 조회
-   // 유저 정보 넣기, 좋아요, 댓글 개수 카운트
     @Transactional
     public Map<String, List<PostGetResponseDto>> getAllPost() {
         Map<String, List<PostGetResponseDto>> listMap = new HashMap<>();
@@ -66,7 +65,6 @@ public class PostService {
         listMap.put("mainData", list);
         return listMap;
     }
-
 
     // 게시글 상세 조회
     public PostGetResponseDto getPostOne(Long postid) {
@@ -134,13 +132,11 @@ public class PostService {
         if (!post.getMember().equals(member)) {
             throw new PrivateException(Code.WRONG_ACCESS_POST_UPDATE);
         }
-
         post.updatePost(postRequestDto);
         return new PostUpdateResponseDto(postId, post);
     }
 
     // 게시글 삭제
-    // 유저 정보 추가 필요
     @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(

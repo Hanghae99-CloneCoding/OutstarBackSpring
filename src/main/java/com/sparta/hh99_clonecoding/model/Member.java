@@ -1,6 +1,5 @@
 package com.sparta.hh99_clonecoding.model;
 
-import com.sparta.hh99_clonecoding.dto.MemberRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
