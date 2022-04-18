@@ -1,19 +1,18 @@
 package com.sparta.hh99_clonecoding.controller;
 
-import com.sparta.hh99_clonecoding.dto.postDto.*;
+import com.sparta.hh99_clonecoding.dto.postDto.PostDetailDto;
+import com.sparta.hh99_clonecoding.dto.postDto.PostGetResponseDto;
+import com.sparta.hh99_clonecoding.dto.postDto.PostRequestDto;
+import com.sparta.hh99_clonecoding.dto.postDto.PostUpdateResponseDto;
 import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.ExceptionResponseDto;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
-import com.sparta.hh99_clonecoding.model.Img;
 import com.sparta.hh99_clonecoding.service.PostService;
 import com.sparta.hh99_clonecoding.service.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,11 +27,11 @@ public class PostController {
     // 게시글 전체 조회 이미지 다중 버전
     // @AuthenticationPrincipal UserDetails userDetails 넣기
     @GetMapping("/posts")
-    public Map<String, List<PostGetAllResponseDto>> getAllPost(){ return postService.getAllPost();}
+    public Map<String, List<PostGetResponseDto>> getAllPost(){ return postService.getAllPost();}
 
     // 메인 페이지 무한 스크롤
     @GetMapping("/postsScroll")
-    public Map<String, List<PostGetAllResponseDto>> getPostSlice(
+    public Map<String, List<PostGetResponseDto>> getPostSlice(
             @RequestParam(required=false) Integer page,
             @RequestParam(required=false) Integer size,
             @RequestParam(required=false) String sortBy ,
@@ -54,14 +53,14 @@ public class PostController {
     // 유저 정보 추가
     @GetMapping("/post/{postId}")
     public ExceptionResponseDto getPost(@PathVariable Long postId) {
-        PostDetailDto postDetailDto = postService.getDetailPost(postId);
-        return new ExceptionResponseDto(Code.OK, postDetailDto);
+        PostGetResponseDto postGetResponseDto = postService.getPostOne(postId);
+        return new ExceptionResponseDto(Code.OK, postGetResponseDto);
     }
 
     @PostMapping("/post")
     public ExceptionResponseDto uploadPost(@RequestPart("desc") PostRequestDto postRequestDto,
                                       @RequestPart("images") List<MultipartFile> multipartFiles) {
-        if (multipartFiles.equals(null)) {
+        if (multipartFiles == null) {
             throw new PrivateException(Code.WRONG_INPUT_DESC);
         }
         List<String> imgPaths = s3Service.upload(multipartFiles);
