@@ -1,10 +1,13 @@
 package com.sparta.hh99_clonecoding.service;
 
+import com.sparta.hh99_clonecoding.dto.commentDto.CommentResponseDto;
 import com.sparta.hh99_clonecoding.dto.postDto.*;
 import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
+import com.sparta.hh99_clonecoding.model.Comment;
 import com.sparta.hh99_clonecoding.model.Img;
 import com.sparta.hh99_clonecoding.model.Post;
+import com.sparta.hh99_clonecoding.repository.CommentRepository;
 import com.sparta.hh99_clonecoding.repository.ImgRepository;
 import com.sparta.hh99_clonecoding.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final ImgRepository imgRepository;
     private final S3Service s3Service;
@@ -30,11 +34,11 @@ public class PostService {
     // 게시글 전체 조회
    // 유저 정보 넣기, 좋아요, 댓글 개수 카운트
     @Transactional
-    public Map<String, List<PostGetAllResponseDto>> getAllPost() {
-        Map<String, List<PostGetAllResponseDto>> listMap = new HashMap<>();
-        List<PostGetAllResponseDto> list = new ArrayList<>();
+    public Map<String, List<PostGetResponseDto>> getAllPost() {
+        Map<String, List<PostGetResponseDto>> listMap = new HashMap<>();
+        List<PostGetResponseDto> list = new ArrayList<>();
         for (Post post : postRepository.findAllByOrderByCreatedAtDesc()) {
-            PostGetAllResponseDto main = createMain(post.getId());
+            PostGetResponseDto main = getPostOne(post.getId());
             list.add(main);
         }
         listMap.put("mainData", list);
@@ -42,46 +46,38 @@ public class PostService {
     }
 
     // 무한 스크롤
-    public Map<String, List<PostGetAllResponseDto>> getAllPostSlice(int page, int size, String sortBy, Boolean isAsc) {
+    public Map<String, List<PostGetResponseDto>> getAllPostSlice(int page, int size, String sortBy, Boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Slice<Post> slicePostList = postRepository.findAllBy(pageable);
 
-        Map<String, List<PostGetAllResponseDto>> listMap = new HashMap<>();
-        List<PostGetAllResponseDto> list = new ArrayList<>();
+        Map<String, List<PostGetResponseDto>> listMap = new HashMap<>();
+        List<PostGetResponseDto> list = new ArrayList<>();
         for (Post post : slicePostList) {
-            PostGetAllResponseDto main = createMain(post.getId());
+            PostGetResponseDto main = getPostOne(post.getId());
             list.add(main);
         }
         listMap.put("mainData", list);
-
         return listMap;
     }
 
-    private PostGetAllResponseDto createMain(Long id) {
-
-        Post post = postRepository.getById(id);
-
-        List<String> imgUrl = imgRepository.findAllByPost(post)
-                .stream()
-                .map(Img::getImgUrl)
-                .collect(Collectors.toList());
-        return new PostGetAllResponseDto(id, post, imgUrl);
-    }
-
     // 게시글 상세 조회
-    public PostDetailDto getDetailPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PrivateException(Code.NOT_FOUND_POST));
+    public PostGetResponseDto getPostOne(Long postid) {
+        Post post = postRepository.getById(postid);
 
         List<String> imgUrl = imgRepository.findAllByPost(post)
                 .stream()
                 .map(Img::getImgUrl)
                 .collect(Collectors.toList());
 
-        return new PostDetailDto(postId, post, imgUrl);
+        List<Comment> findCommentByPost = commentRepository.findAllByPost(post);
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        for (Comment comment : findCommentByPost) {
+            commentResponseDtoList.add(new CommentResponseDto(comment));
+        }
+        return new PostGetResponseDto(postid, post, imgUrl, commentResponseDtoList);
     }
 
     // 게시글 작성
@@ -113,7 +109,6 @@ public class PostService {
         }
     }
 
-    // 게시글 수정 - 글만
     // 유저 정보 추가
     @Transactional
     public PostUpdateResponseDto updatePost(Long postId, PostRequestDto postRequestDto) {

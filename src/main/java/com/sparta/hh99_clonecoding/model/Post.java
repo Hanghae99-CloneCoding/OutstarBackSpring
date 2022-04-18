@@ -45,10 +45,6 @@ public class Post extends Timestamped {
         this.desc = desc;
     }
 
-    public void addImgList(Img img) {
-        imgList.add(img);
-    }
-
     // 게시글 수정
     public void updatePost(PostRequestDto res) {
         if (!StringUtils.hasText(res.getDesc())) {

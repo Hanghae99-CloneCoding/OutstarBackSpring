@@ -8,12 +8,12 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 public class CommentResponseDto {
-    private Long postId;
+    private Long commentId;
     private String comment;
     private String modifiedAt;
 
     public CommentResponseDto(Comment comment) {
-        this.postId = comment.getId();
+        this.commentId = comment.getId();
         this.comment = comment.getComment();
         this.modifiedAt = formatter(comment.getModifiedAt());
     }

@@ -8,8 +8,10 @@ import com.sparta.hh99_clonecoding.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/post/{postId}")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -17,7 +19,7 @@ public class CommentController {
 
     // Comment 작성
     // 유저 정보 추가
-    @PostMapping("/comment")
+    @PostMapping("/post/{postId}/comment")
     public ExceptionResponseDto postComment(@PathVariable(name="postId") Long postId, @RequestBody CommentRequestDto commentRequestDto) {
         CommentResponseDto commentResponseDto = commentService.postComment(postId, commentRequestDto);
         return new ExceptionResponseDto(Code.OK, commentResponseDto);
@@ -26,8 +28,8 @@ public class CommentController {
     // Comment 수정
     // 유저 정보 추가
     @PutMapping("/comment/{commentId}")
-    public ExceptionResponseDto updateComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto) {
-        CommentResponseDto commentResponseDto = commentService.updateComment(postId, commentId, commentRequestDto);
+    public ExceptionResponseDto updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto) {
+        CommentResponseDto commentResponseDto = commentService.updateComment(commentId, commentRequestDto);
         return new ExceptionResponseDto(Code.OK, commentResponseDto);
     }
 

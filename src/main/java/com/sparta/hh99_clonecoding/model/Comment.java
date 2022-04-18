@@ -18,7 +18,7 @@ public class Comment extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Post post;
 
@@ -26,22 +26,18 @@ public class Comment extends Timestamped{
     private String comment;
 
     public Comment(Post post, CommentRequestDto commentRequestDto) {
+        if (!StringUtils.hasText(commentRequestDto.getComment())) {
+            throw new PrivateException(Code.WRONG_INPUT_COMMENT);
+        }
+
         this.post = post;
         this.comment = commentRequestDto.getComment();
     }
 
-//    public void update(CommentRequestDto commentRequestDto) {
-//        if (!StringUtils.hasText(commentRequestDto.getComment())) {
-//            throw new PrivateException(Code.WRONG_INPUT_COMMENT);
-//        }
-//        this.comment = commentRequestDto.getComment();
-//    }
-
-    public void update(Post post, CommentRequestDto commentRequestDto) {
+    public void update(CommentRequestDto commentRequestDto) {
         if (!StringUtils.hasText(commentRequestDto.getComment())) {
             throw new PrivateException(Code.WRONG_INPUT_COMMENT);
         }
-        this.post = post;
         this.comment = commentRequestDto.getComment();
     }
 }

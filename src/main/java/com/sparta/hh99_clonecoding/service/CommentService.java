@@ -10,7 +10,8 @@ import com.sparta.hh99_clonecoding.repository.CommentRepository;
 import com.sparta.hh99_clonecoding.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class CommentService {
 
     // 댓글 작성
     // 유저 정보 추가
+    @Transactional
     public CommentResponseDto postComment( Long postId, CommentRequestDto commentRequestDto) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PrivateException(Code.NOT_FOUND_POST));
@@ -32,10 +34,8 @@ public class CommentService {
 
     // 댓글 수정
     // 유저 정보 추가
-    public CommentResponseDto updateComment(Long postId, Long commentId, CommentRequestDto commentRequestDto) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PrivateException(Code.NOT_FOUND_POST));
-
+    @Transactional
+    public CommentResponseDto updateComment(Long commentId, CommentRequestDto commentRequestDto) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new PrivateException(Code.NOT_FOUND_COMMENT));
 
@@ -43,14 +43,15 @@ public class CommentService {
 //            throw new PrivateException(Code.WRONG_ACCESS_COMMENT_UPDATE);
 //        }
 
-        comment.update(post, commentRequestDto);
+        comment.update(commentRequestDto);
         return new CommentResponseDto(comment);
     }
 
     // 댓글 삭제
+    @Transactional
     public void deleteComment(Long commentId) {
-//        Comment comment = commentRepository.findById(commentId).orElseThrow(
-//                () -> new PrivateException(Code.NOT_FOUND_COMMENT));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new PrivateException(Code.NOT_FOUND_COMMENT));
 //
 //        if (!comment.getMember().equals(member)) {
 //            throw new PrivateException(Code.WRONG_ACCESS_COMMENT_DELETE);
