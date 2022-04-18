@@ -14,7 +14,7 @@ public class TestController {
 
     @GetMapping("/api/test/getERR")
     public void getPosts(){
-        throw new PrivateException(Code.POST_GET_ERROR);
+        throw new PrivateException(Code.NOT_FOUND_POST);
     }
 
     @GetMapping("/api/test/ok")
