@@ -107,6 +107,9 @@ public class KakaoUserService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
+        //TODO
+        //1. email 선택항목을 누르지 않은 사람들한테 어떻게 email 정보를 받아올 수 있을까 ?? 확인 필요하다.
+        // 현재는 이메일이 없을 경우 아마 NullException 발생 예정
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
 
