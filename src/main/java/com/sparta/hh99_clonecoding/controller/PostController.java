@@ -8,7 +8,6 @@ import com.sparta.hh99_clonecoding.exception.ExceptionResponseDto;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
 import com.sparta.hh99_clonecoding.service.PostService;
 import com.sparta.hh99_clonecoding.service.S3Service;
-import com.sparta.hh99_clonecoding.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,7 +70,6 @@ public class PostController {
     }
 
     // 게시글 수정
-    // @AuthenticationPrincipal UserDetails userDetails 넣기
     @PutMapping("/post/{postId}")
     public ExceptionResponseDto updatePost(@PathVariable Long postId,@RequestPart("content") PostRequestDto postRequestDto) {
         PostUpdateResponseDto postUpdateResponseDto = postService.updatePost(postId, postRequestDto);
