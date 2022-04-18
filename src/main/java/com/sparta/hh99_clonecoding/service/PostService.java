@@ -67,9 +67,11 @@ public class PostService {
         return listMap;
     }
 
+
     // 게시글 상세 조회
     public PostGetResponseDto getPostOne(Long postid) {
-        Post post = postRepository.getById(postid);
+        Post post = postRepository.findById(postid).orElseThrow(
+                () -> new PrivateException(Code.NOT_FOUND_POST));
 
         List<String> imgUrl = imgRepository.findAllByPost(post)
                 .stream()
@@ -145,18 +147,20 @@ public class PostService {
                 () -> new PrivateException(Code.NOT_FOUND_POST)
         );
 
-        // 유저 조회
-//        Member member = memberRepository.findByUserName(username).orElseThow(
-//                () -> new PrivateException(Code.NOT_FOUND_USER_NAME)
-//        );
+        System.out.println("로그인한 username : " + SecurityUtil.getCurrentUsername());
+
+        String username = SecurityUtil.getCurrentUsername();
+
+        Member member = memberRepository.findMemberByUsername(username).orElseThrow(
+                () -> new PrivateException(Code.NOT_FOUND_MEMBER)
+        );
 
         // 본인의 게시글만 삭제 가능
-//        if (!post.getMember().equals(member)) {
-//           throw new PrivateException(Code.WRONG_ACCESS_POST_DELETE);
-
-        // 게시글의 이미지 삭제
+        if (!post.getMember().equals(member)) {
+            throw new PrivateException(Code.WRONG_ACCESS_POST_DELETE);
+        }
+        commentRepository.deleteAll(post.getComment());
         s3Service.delete(post.getImgList());
-        // 해당 게시글 삭제
         postRepository.delete(post);
     }
 }

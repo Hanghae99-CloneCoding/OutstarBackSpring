@@ -32,5 +32,4 @@ public class Validator {
 
         return Pattern.matches(pattern, username);
     }
-
 }
