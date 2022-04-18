@@ -64,7 +64,6 @@ public class PostService {
 
         Post post = postRepository.getById(id);
 
-        imgRepository.findAllByPost(post).forEach(post::addImgList);
         List<String> imgUrl = imgRepository.findAllByPost(post)
                 .stream()
                 .map(Img::getImgUrl)
@@ -77,7 +76,6 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PrivateException(Code.NOT_FOUND_POST));
 
-        imgRepository.findAllByPost(post).forEach(post::addImgList);
         List<String> imgUrl = imgRepository.findAllByPost(post)
                 .stream()
                 .map(Img::getImgUrl)
@@ -91,8 +89,6 @@ public class PostService {
     @Transactional
     public void uploadPost(PostRequestDto res, List<String> imgPaths) {
         postBlankCheck(imgPaths);
-        System.out.println("이미지 있니" + imgPaths);
-
         // 유저 조회
 //        User user = userRepository.findByUserName(username).orElseThow(
 //                () -> new PrivateException(Code.NOT_FOUND_USER_NAME)
@@ -109,8 +105,6 @@ public class PostService {
             imgRepository.save(img);
             imgList.add(img.getImgUrl());
         }
-        System.out.println("이미지 있니2" + imgList);
-        new PostResponseDto(desc, imgList);
     }
 
     private void postBlankCheck(List<String> imgPaths) {
@@ -133,7 +127,7 @@ public class PostService {
 
         // 본인의 게시글만 수정 가능
 //        if (!post.getMember().equals(member)) {
-//           throw new PrivateException(Code.WRONG_USER_NAME);
+//           throw new PrivateException(Code.WRONG_ACCESS_POST_UPDATE);
 
 //        if(!StringUtils.hasText(postRequestDto.getDesc())){
 //            throw new ApiRequestException("내용은 반드시 있어야합니다.");
@@ -158,7 +152,7 @@ public class PostService {
 
         // 본인의 게시글만 삭제 가능
 //        if (!post.getMember().equals(member)) {
-//           throw new PrivateException(Code.WRONG_USER_NAME_DELETE);
+//           throw new PrivateException(Code.WRONG_ACCESS_POST_DELETE);
 
         // 게시글의 이미지 삭제
         s3Service.delete(post.getImgList());

@@ -13,26 +13,29 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private CommentService commentService;
+    private final CommentService commentService;
 
+    // Comment 작성
+    // 유저 정보 추가
     @PostMapping("/comment")
-    public ExceptionResponseDto postComment(@PathVariable Long postId, @RequestBody CommentRequestDto commentRequestDto) {
+    public ExceptionResponseDto postComment(@PathVariable(name="postId") Long postId, @RequestBody CommentRequestDto commentRequestDto) {
         CommentResponseDto commentResponseDto = commentService.postComment(postId, commentRequestDto);
         return new ExceptionResponseDto(Code.OK, commentResponseDto);
     }
-//    @PutMapping("/post/{postId}")
-//    public ExceptionResponseDto updatePost(@PathVariable Long postId,@RequestPart("desc") PostRequestDto postRequestDto) {
-//        PostUpdateResponseDto postUpdateResponseDto = postService.updatePost(postId, postRequestDto);
-//        return new ExceptionResponseDto(Code.OK, postUpdateResponseDto);
-//    }
-//
-//    @GetMapping("/post/{postId}")
-//    public ExceptionResponseDto getPost(@PathVariable Long postId) {
-//        PostDetailDto postDetailDto = postService.getDetailPost(postId);
-//        return new ExceptionResponseDto(Code.OK, postDetailDto);
-//    }
 
-//    @PutMapping("/comment/{commentId}")
-//
-//    @DeleteMapping("/comment/commentId}")
+    // Comment 수정
+    // 유저 정보 추가
+    @PutMapping("/comment/{commentId}")
+    public ExceptionResponseDto updateComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto) {
+        CommentResponseDto commentResponseDto = commentService.updateComment(postId, commentId, commentRequestDto);
+        return new ExceptionResponseDto(Code.OK, commentResponseDto);
+    }
+
+    // Comment 삭제
+    // 유저 정보 추가
+    @DeleteMapping("/comment/{commentId}")
+    public ExceptionResponseDto deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        return new ExceptionResponseDto(Code.OK);
+    }
 }
