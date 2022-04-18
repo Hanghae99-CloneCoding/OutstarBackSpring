@@ -52,6 +52,7 @@ public class TokenProvider implements InitializingBean {
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
         return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
                 .setSubject(authentication.getName())
                 .setIssuer("HH99_10_GROUP_OUTSTAGRAM")
                 .setIssuedAt(new Date())
