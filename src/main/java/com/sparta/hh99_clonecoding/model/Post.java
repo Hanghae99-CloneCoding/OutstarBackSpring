@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-
 public class Post extends Timestamped {
 
     @Id
@@ -35,16 +34,15 @@ public class Post extends Timestamped {
 //    @JoinColumn
 //    private User user;
 
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comment;
+
     // 게시글 작성
     public Post(String desc) {
         if (!StringUtils.hasText(desc)) {
             throw new PrivateException(Code.WRONG_INPUT_DESC);
         }
         this.desc = desc;
-    }
-
-    public void addImgList(Img img) {
-        imgList.add(img);
     }
 
     // 게시글 수정
