@@ -50,18 +50,18 @@ public class PostController {
     }
 
     // 게시글 상세 조회
-    // 유저 정보 추가
     @GetMapping("/post/{postId}")
     public ExceptionResponseDto getPost(@PathVariable Long postId) {
         PostGetResponseDto postGetResponseDto = postService.getPostOne(postId);
         return new ExceptionResponseDto(Code.OK, postGetResponseDto);
     }
 
+    // 게시글 작성
     @PostMapping("/post")
-    public ExceptionResponseDto uploadPost(@RequestPart("desc") PostRequestDto postRequestDto,
-                                      @RequestPart("images") List<MultipartFile> multipartFiles) {
+    public ExceptionResponseDto uploadPost(@RequestPart("content") PostRequestDto postRequestDto,
+                                           @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
         if (multipartFiles == null) {
-            throw new PrivateException(Code.WRONG_INPUT_DESC);
+            throw new PrivateException(Code.WRONG_INPUT_CONTENT);
         }
         List<String> imgPaths = s3Service.upload(multipartFiles);
         System.out.println("IMG 경로들 : " + imgPaths);
@@ -73,7 +73,7 @@ public class PostController {
     // 게시글 수정
     // @AuthenticationPrincipal UserDetails userDetails 넣기
     @PutMapping("/post/{postId}")
-    public ExceptionResponseDto updatePost(@PathVariable Long postId,@RequestPart("desc") PostRequestDto postRequestDto) {
+    public ExceptionResponseDto updatePost(@PathVariable Long postId,@RequestPart("content") PostRequestDto postRequestDto) {
         PostUpdateResponseDto postUpdateResponseDto = postService.updatePost(postId, postRequestDto);
         return new ExceptionResponseDto(Code.OK, postUpdateResponseDto);
     }
@@ -82,12 +82,6 @@ public class PostController {
     @DeleteMapping("/post/{postId}")
     public ExceptionResponseDto deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
-        return new ExceptionResponseDto(Code.OK);
-    }
-
-    @PostMapping("/post/test")
-    public ExceptionResponseDto testPost(){
-        System.out.println(SecurityUtil.getCurrentUsername());
         return new ExceptionResponseDto(Code.OK);
     }
 }

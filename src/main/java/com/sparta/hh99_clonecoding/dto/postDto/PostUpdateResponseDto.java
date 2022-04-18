@@ -11,12 +11,12 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class PostUpdateResponseDto {
     private Long postId;
-    private String desc;
+    private String content;
     private String modifiedAt;
 
     public PostUpdateResponseDto(Long postId, Post post) {
         this.postId = postId;
-        this.desc = post.getDesc();
+        this.content = post.getContent();
         this.modifiedAt = formatter(post.getModifiedAt());
     }
 

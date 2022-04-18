@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostRequestDto {
 //    private String username;
-    private String desc;
+    private String content;
     private String imgUrl;
 }

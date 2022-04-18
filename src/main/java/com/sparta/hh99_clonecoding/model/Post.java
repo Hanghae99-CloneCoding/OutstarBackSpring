@@ -17,11 +17,11 @@ import java.util.List;
 public class Post extends Timestamped {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
 
     @Column(nullable = false)
-    private String desc;
+    private String content;
 
     @Transient
     private final List<Img> imgList = new ArrayList<>();
@@ -30,26 +30,27 @@ public class Post extends Timestamped {
 //    @JsonManagedReference
 //    private List<Img> imgList;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Member member;
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comment;
 
     // 게시글 작성
-    public Post(String desc) {
-        if (!StringUtils.hasText(desc)) {
-            throw new PrivateException(Code.WRONG_INPUT_DESC);
+    public Post(String content, Member member) {
+        if (!StringUtils.hasText(content)) {
+            throw new PrivateException(Code.WRONG_INPUT_CONTENT);
         }
-        this.desc = desc;
+        this.content = content;
+        this.member = member;
     }
 
     // 게시글 수정
     public void updatePost(PostRequestDto res) {
-        if (!StringUtils.hasText(res.getDesc())) {
-            throw new PrivateException(Code.WRONG_INPUT_DESC);
+        if (!StringUtils.hasText(res.getContent())) {
+            throw new PrivateException(Code.WRONG_INPUT_CONTENT);
         }
-        this.desc = res.getDesc();
+        this.content = res.getContent();
     }
 }

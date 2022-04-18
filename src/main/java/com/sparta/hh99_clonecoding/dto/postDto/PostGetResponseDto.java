@@ -10,17 +10,18 @@ import java.util.List;
 
 @Getter
 public class PostGetResponseDto {
-    // 유저 정보 추가
     // 좋아요 수 추가
     private Long postId;
-    private String desc;
+    private String username;
+    private String content;
     private List<String> imgUrl;
     private String modifiedAt;
     private List<CommentResponseDto> commentList;
 
     public PostGetResponseDto(Long postId, Post post, List<String> imgUrl, List<CommentResponseDto> commentList) {
         this.postId = postId;
-        this.desc = post.getDesc();
+        this.username = post.getMember().getUsername();
+        this.content = post.getContent();
         this.imgUrl = imgUrl;
         this.modifiedAt = formatter(post.getModifiedAt());
         this.commentList = commentList;

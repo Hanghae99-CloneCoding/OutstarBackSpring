@@ -6,10 +6,13 @@ import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
 import com.sparta.hh99_clonecoding.model.Comment;
 import com.sparta.hh99_clonecoding.model.Img;
+import com.sparta.hh99_clonecoding.model.Member;
 import com.sparta.hh99_clonecoding.model.Post;
 import com.sparta.hh99_clonecoding.repository.CommentRepository;
 import com.sparta.hh99_clonecoding.repository.ImgRepository;
+import com.sparta.hh99_clonecoding.repository.MemberRepository;
 import com.sparta.hh99_clonecoding.repository.PostRepository;
+import com.sparta.hh99_clonecoding.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final CommentRepository commentRepository;
+    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final ImgRepository imgRepository;
     private final S3Service s3Service;
@@ -81,18 +85,19 @@ public class PostService {
     }
 
     // 게시글 작성
-    // 유저 정보 넣기
     @Transactional
     public void uploadPost(PostRequestDto res, List<String> imgPaths) {
         postBlankCheck(imgPaths);
-        // 유저 조회
-//        User user = userRepository.findByUserName(username).orElseThow(
-//                () -> new PrivateException(Code.NOT_FOUND_USER_NAME)
-//        );
+        System.out.println("로그인한 username : " + SecurityUtil.getCurrentUsername());
 
-        String desc = res.getDesc();
+        String username = SecurityUtil.getCurrentUsername();
 
-        Post post = new Post(desc);
+        Member member = memberRepository.findMemberByUsername(username).orElseThrow(
+                () -> new PrivateException(Code.NOT_FOUND_MEMBER)
+        );
+        String content = res.getContent();
+
+        Post post = new Post(content, member);
         postRepository.save(post);
 
         List<String> imgList = new ArrayList<>();
@@ -109,24 +114,24 @@ public class PostService {
         }
     }
 
-    // 유저 정보 추가
+    // 게시글 수정
     @Transactional
     public PostUpdateResponseDto updatePost(Long postId, PostRequestDto postRequestDto) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PrivateException(Code.NOT_FOUND_POST));
 
-        // 유저 조회
-//        Member member = memberRepository.findByUserName(username).orElseThow(
-//                () -> new PrivateException(Code.NOT_FOUND_USER_NAME)
-//        );
+        System.out.println("로그인한 username : " + SecurityUtil.getCurrentUsername());
+
+        String username = SecurityUtil.getCurrentUsername();
+
+        Member member = memberRepository.findMemberByUsername(username).orElseThrow(
+                () -> new PrivateException(Code.NOT_FOUND_MEMBER)
+        );
 
         // 본인의 게시글만 수정 가능
-//        if (!post.getMember().equals(member)) {
-//           throw new PrivateException(Code.WRONG_ACCESS_POST_UPDATE);
-
-//        if(!StringUtils.hasText(postRequestDto.getDesc())){
-//            throw new ApiRequestException("내용은 반드시 있어야합니다.");
-//        }
+        if (!post.getMember().equals(member)) {
+            throw new PrivateException(Code.WRONG_ACCESS_POST_UPDATE);
+        }
 
         post.updatePost(postRequestDto);
         return new PostUpdateResponseDto(postId, post);
