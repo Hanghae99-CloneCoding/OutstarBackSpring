@@ -22,7 +22,6 @@ public class PostGetAllResponseDto {
         this.desc = post.getDesc();
         this.imgUrl = imgUrl;
         this.modifiedAt = formatter(post.getModifiedAt());
-
     }
 
     public String formatter(LocalDateTime localDateTime) {

@@ -1,19 +1,18 @@
 package com.sparta.hh99_clonecoding.controller;
 
-import com.sparta.hh99_clonecoding.dto.postDto.*;
+import com.sparta.hh99_clonecoding.dto.postDto.PostDetailDto;
+import com.sparta.hh99_clonecoding.dto.postDto.PostGetAllResponseDto;
+import com.sparta.hh99_clonecoding.dto.postDto.PostRequestDto;
+import com.sparta.hh99_clonecoding.dto.postDto.PostUpdateResponseDto;
 import com.sparta.hh99_clonecoding.exception.Code;
 import com.sparta.hh99_clonecoding.exception.ExceptionResponseDto;
 import com.sparta.hh99_clonecoding.exception.PrivateException;
-import com.sparta.hh99_clonecoding.model.Img;
 import com.sparta.hh99_clonecoding.service.PostService;
 import com.sparta.hh99_clonecoding.service.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

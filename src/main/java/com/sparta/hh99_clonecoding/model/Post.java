@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-
 public class Post extends Timestamped {
 
     @Id
@@ -34,6 +33,9 @@ public class Post extends Timestamped {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn
 //    private User user;
+
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comment;
 
     // 게시글 작성
     public Post(String desc) {
