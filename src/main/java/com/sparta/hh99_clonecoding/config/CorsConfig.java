@@ -1,5 +1,7 @@
 package com.sparta.hh99_clonecoding.config;
 
+import com.sparta.hh99_clonecoding.jwt.JwtFilter;
+import io.jsonwebtoken.Jwts;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -11,6 +13,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
 //                .allowedOrigins("*")
                 .allowedOrigins("http://localhost:3000")
-                .allowedMethods("*");
+                .allowedMethods("*")
+                .exposedHeaders(JwtFilter.AUTHORIZATION_HEADER);
     }
 }
