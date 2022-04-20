@@ -46,5 +46,4 @@ public class MemberController {
 
         return new ResponseEntity<>(new ExceptionResponseDto(Code.OK), httpHeaderWithJWT, HttpStatus.OK);
     }
-
 }

@@ -83,7 +83,6 @@ public class S3Service  {
         if (fileName.length() == 0) {
             throw new PrivateException(Code.WRONG_INPUT_IMAGE);
         }
-
         ArrayList<String> fileValidate = new ArrayList<>();
         fileValidate.add(".jpg");
         fileValidate.add(".jpeg");
