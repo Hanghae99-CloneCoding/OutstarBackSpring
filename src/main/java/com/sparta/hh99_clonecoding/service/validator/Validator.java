@@ -28,7 +28,7 @@ public class Validator {
 
     private boolean isValidUsername(String username) {
         //2. username : 영어(소대문자)+숫자/3~15
-        String pattern = "^[A-Za-z0-9]{3,15}$";
+        String pattern = "^[A-Za-z0-9가-힣]{3,15}$";
 
         return Pattern.matches(pattern, username);
     }
