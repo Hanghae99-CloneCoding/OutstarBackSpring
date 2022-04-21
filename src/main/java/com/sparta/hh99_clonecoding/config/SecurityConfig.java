@@ -94,8 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowCredentials(true) ;
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedOrigin("http://localhost:3000"); // local 테스트 시
-        // 수정 필요
-        configuration.addAllowedOrigin("http://merry-hi5.shop.s3-website.ap-northeast-2.amazonaws.com/"); // 배포 시
+        configuration.addAllowedOrigin("http://outsta.s3-website.ap-northeast-2.amazonaws.com"); // 배포 시
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Authorization");

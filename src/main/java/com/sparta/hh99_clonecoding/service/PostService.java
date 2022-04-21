@@ -109,7 +109,7 @@ public class PostService {
     }
 
     private void postBlankCheck(List<String> imgPaths) {
-        if(imgPaths == null || imgPaths.isEmpty()){ //.isEmpty()도 되는지 확인해보기
+        if(imgPaths == null || imgPaths.isEmpty()){
             throw new PrivateException(Code.WRONG_INPUT_IMAGE);
         }
     }
